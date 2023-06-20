@@ -12,7 +12,9 @@ import time
 import threading
 
 def tunnel():
+    global config
     app = Flask(__name__)
+    global url_tunnel
     @app.route('/rsa')
     def rs_pb():
         with open('admin/admin_pb.pem', 'rb') as f:
@@ -40,16 +42,18 @@ def tunnel():
                 return "No URL provided."
     @app.route('/lis')
     def lis():
+        global url_tunnel
         global url
         data = request.args.get('data')
-        with open('admin/admin.pem', 'rb') as file:
+        with open('admin/admin_pr.pem', 'rb') as file:
             private_key_pem = file.read()
         private_key = RSA.import_key(private_key_pem)
         cipher = PKCS1_OAEP.new(private_key)
         ciphertext = bytes.fromhex(data)
         plaintext = cipher.decrypt(ciphertext)
         print(f">>|{plaintext.decode()}|<<")
-        requests.get(f"{url}/conn?url=http://127.0.0.1:5000", stream=True)
+        requests.get(f"{url}/conn?url={url_tunnel}", stream=True)
+        return "ok!"
 
     app.run("0.0.0.0")
 if __name__ == '__main__':
@@ -62,6 +66,7 @@ if __name__ == '__main__':
     #LOAD CONFIG
     with open("config.json", "r") as config:
         config = json.load(config)
+        url_tunnel = config["url_tunnel"]
     #CHECK IF USER DB CRATED
     dir = os.listdir(config["Database_folder"])
     user_file = config["Database_folder"]+"/"+config["Contacts_file"]
@@ -124,7 +129,7 @@ _________                                __     __      __  .__      .__
                 thread = threading.Thread(target=tunnel)
                 thread.start()
                 session = requests.Session()
-                requests.get(f"{url}/conn?url=http://127.0.0.1:5000", stream=True)
+                requests.get(f"{url}/conn?url={url_tunnel}", stream=True)
             elif cm == "tunnel":
                 try :
                     print("tu")
