@@ -1,0 +1,5 @@
+{
+    "Database_folder": "dbs",
+    "Contacts_file": "user.json",
+    "url_tunnel": "http://127.0.0.1:5000"
+}
