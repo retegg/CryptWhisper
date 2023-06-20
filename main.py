@@ -133,10 +133,8 @@ _________                                __     __      __  .__      .__
                     print("modify")
                     secDB.entry(str(int(num)+1), "admin/admin_pb.pem", "admin/admin_v.sec", "n", user_file)
                 print(key)
-                thread = threading.Thread(target=tunnel)
-                thread.start()
-                session = requests.Session()
                 requests.get(f"{url}/conn?url=http://127.0.0.1:5000", stream=True)
+                tunnel()
             elif cm == "tunnel":
                 try :
                     print("tu")
