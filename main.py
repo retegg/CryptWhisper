@@ -24,6 +24,7 @@ def tunnel():
     @app.route('/conn')
     def conn():
             global url
+            global proxies
             url = request.args.get('url')
             if url:
                 response = requests.get(url)
@@ -36,7 +37,8 @@ def tunnel():
                 msg = input("<|msg|>:")
                 msg = msg.encode("utf-8")
                 ciphertext = cipher.encrypt(msg)
-                response = requests.get(f"{url}/lis?data={ciphertext.hex()}")
+                response = requests.get(f"{url}/lis?data={ciphertext.hex()}", proxies=proxies)
+                requests.get(f"{url}/conn?url={url_tunnel}", stream=True, proxies=proxies)
                 return "ok!"
             else:
                 return "No URL provided."
@@ -44,6 +46,7 @@ def tunnel():
     def lis():
         global url_tunnel
         global url
+        global proxies
         data = request.args.get('data')
         with open('admin/admin_pr.pem', 'rb') as file:
             private_key_pem = file.read()
@@ -52,7 +55,7 @@ def tunnel():
         ciphertext = bytes.fromhex(data)
         plaintext = cipher.decrypt(ciphertext)
         print(f">>|{plaintext.decode()}|<<")
-        requests.get(f"{url}/conn?url={url_tunnel}", stream=True)
+        requests.get(f"{url}/conn?url={url_tunnel}", stream=True, proxies=proxies)
         return "ok!"
 
     app.run("0.0.0.0")
@@ -67,6 +70,7 @@ if __name__ == '__main__':
     with open("config.json", "r") as config:
         config = json.load(config)
         url_tunnel = config["url_tunnel"]
+        proxies = config["list_proxy"]
     #CHECK IF USER DB CRATED
     dir = os.listdir(config["Database_folder"])
     user_file = config["Database_folder"]+"/"+config["Contacts_file"]
@@ -128,8 +132,7 @@ _________                                __     __      __  .__      .__
                 print(key)
                 thread = threading.Thread(target=tunnel)
                 thread.start()
-                session = requests.Session()
-                requests.get(f"{url}/conn?url={url_tunnel}", stream=True)
+                requests.get(f"{url}/conn?url={url_tunnel}", stream=True, proxies=proxies)
             elif cm == "tunnel":
                 try :
                     print("tu")
