@@ -38,7 +38,7 @@ def tunnel():
                 msg = msg.encode("utf-8")
                 ciphertext = cipher.encrypt(msg)
                 response = requests.get(f"{url}/lis?data={ciphertext.hex()}", proxies=proxies)
-                requests.get(f"{url_tunnel}/conn?url={url}", stream=True, proxies=proxies)
+                _ = requests.get(f"{url_tunnel}/conn?url={url}", stream=True, proxies=proxies)
                 return "ok!"
             else:
                 return "No URL provided."
@@ -55,8 +55,8 @@ def tunnel():
         ciphertext = bytes.fromhex(data)
         plaintext = cipher.decrypt(ciphertext)
         print(f">>|{plaintext.decode()}|<<")
-        requests.get(f"{url}/conn?url={url_tunnel}", stream=True, proxies=proxies)
-        requests.get(f"{url_tunnel}/conn?url={url}", stream=True, proxies=proxies)
+        _ = requests.get(f"{url}/conn?url={url_tunnel}", stream=True, proxies=proxies)
+        _ = requests.get(f"{url_tunnel}/conn?url={url}", stream=True, proxies=proxies)
         return "ok!"
 
     app.run("0.0.0.0")
@@ -152,4 +152,3 @@ _________                                __     __      __  .__      .__
             print(e)
             print("Exception occurred on line", line_no, "of file", filename)
             pass
-            
