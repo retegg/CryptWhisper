@@ -38,6 +38,7 @@ def tunnel():
                 msg = msg.encode("utf-8")
                 ciphertext = cipher.encrypt(msg)
                 response = requests.get(f"{url}/lis?data={ciphertext.hex()}", proxies=proxies)
+                requests.get(f"{url_tunnel}/conn?url={url}", stream=True, proxies=proxies)
                 return "ok!"
             else:
                 return "No URL provided."
