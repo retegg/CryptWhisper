@@ -6,7 +6,11 @@ Whe use te RSA algorithem to secure our conections
 ## Install
 Remove the keys and the user.json 
 **IMPORTANT ONLY REMOVE THE FILES NOT THE DIRECTORIES**
+Then run *main.py*
 Modify the config.json as you please.
+Modify teh "url_tunnel" with your url 
+*Example: "http://192.168.1.123:5000"*
+You can add proxies
 
 ## How to use
 1. run the main.py
