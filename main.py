@@ -107,21 +107,14 @@ _________                                __     __      __  .__      .__
                 key = ""
                 url = input("url: ")
                 _, num = secDB.see_entry("admin/admin_pr.pem", "admin/admin_v.sec", "n", user_file)
-                print(int(num))
-                print("---")
                 for i in range(int(num)+1):
-                    print("---------")
-                    print(i)
                     _, data = secDB.see_entry("admin/admin_pr.pem", "admin/admin_v.sec", i, user_file)
-                    print(data)
                     if data == "DATA has been MODIFIED !!":
-                        print("DATA of id ", i, "has been modified !!!")
+                        print("-----------------DATA of id ", i, "has been modified !!!--------------------")
                     data = json.loads(data)
                     if data["url"] == url:
                         key = data["key"] 
                         break
-                print(key)
-                print("finish")
                 if key == "":
                     print("USER KEY NOT FOUND PLS REQUEST")
                     key = input("Key: ")
@@ -131,14 +124,12 @@ _________                                __     __      __  .__      .__
                     time.sleep(1)
                     print("modify")
                     secDB.entry(str(int(num)+1), "admin/admin_pb.pem", "admin/admin_v.sec", "n", user_file)
-                print(key)
                 thread = threading.Thread(target=tunnel)
                 thread.start()
                 _ = requests.get(f"{url}/conn?url={url_tunnel}", stream=True, proxies=proxies)
                 msg_shell()
             elif cm == "tunnel":
                 try :
-                    print("tu")
                     tunnel()
 
                 except Exception as e :
