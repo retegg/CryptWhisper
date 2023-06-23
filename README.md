@@ -4,14 +4,19 @@ A Program that makes a secure conection between a tunnel an a client.
 ## Tecnology
 Whe use te RSA algorithem to secure our conections
 ## Install
-Remove the keys and the user.json 
-**IMPORTANT ONLY REMOVE THE FILES NOT THE DIRECTORIES**
-Then run *main.py*
-Modify the config.json as you please.
-Modify teh "url_tunnel" with your url 
-*Example: "http://192.168.1.123:5000"*
-You can add proxies
+Remove the keys and the user.json
 
+**IMPORTANT ONLY REMOVE THE FILES NOT THE DIRECTORIES**
+
+Then run *main.py*
+
+Modify the config.json as you please.
+
+Modify the "url_tunnel" with your url 
+
+*Example: "http://192.168.1.123:5000"*
+
+You can add proxies by modifing the config
 ## How to use
 1. run the main.py
 2. generate a tunnel
