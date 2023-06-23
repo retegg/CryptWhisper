@@ -5,7 +5,7 @@ A Program that makes a secure conection between a tunnel an a client.
 Whe use te RSA algorithem to secure our conections
 ## Install
 Remove the keys and the user.json **IMPORTANT ONLY REMOVE THE FILES NOT THE DIRECTORIES**
-Modify the config.json as you plase.
+Modify the config.json as you please.
 
 ## How to use
 1. run the main.py
