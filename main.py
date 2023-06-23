@@ -10,40 +10,41 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 import time
 import threading
+app = Flask(__name__)
+def msg_shell():
+    global url
+    while True :
+        msg = input(":")
+        send_message(url, msg)
+def send_message(url, message):
+    response = requests.get(f"{url}/rsa")
+    rsa_k = response.text
+    public_key = RSA.import_key(rsa_k)
+    cipher = PKCS1_OAEP.new(public_key)
+    msg = message.encode("utf-8")
+    ciphertext = cipher.encrypt(msg)
+    response = requests.get(f"{url}/lis?data={ciphertext.hex()}")
+    return response.text
 
 def tunnel():
     global config
-    app = Flask(__name__)
     global url_tunnel
-    @app.route('/rsa')
-    def rs_pb():
+    app.run("0.0.0.0")
+
+@app.route('/rsa')
+def rs_pb():
         with open('admin/admin_pb.pem', 'rb') as f:
             key_data = f.read()
             return key_data
+@app.route('/conn')
+def conn():
+    global url
+    url = request.args.get('url')
+    print(f"|>conection from {url}<|")
+    return "ok!"
 
-    @app.route('/conn')
-    def conn():
-            global url
-            global proxies
-            url = request.args.get('url')
-            if url:
-                response = requests.get(url)
-                time.sleep(1)
-                url_r = url + "/rsa"
-                response = requests.get(url_r)
-                rsa_k = response.text
-                public_key = RSA.import_key(rsa_k)
-                cipher = PKCS1_OAEP.new(public_key)
-                msg = input("<|msg|>:")
-                msg = msg.encode("utf-8")
-                ciphertext = cipher.encrypt(msg)
-                response = requests.get(f"{url}/lis?data={ciphertext.hex()}", proxies=proxies)
-                _ = requests.get(f"{url_tunnel}/conn?url={url}", stream=True, proxies=proxies)
-                return "ok!"
-            else:
-                return "No URL provided."
-    @app.route('/lis')
-    def lis():
+@app.route('/lis')
+def lis():
         global url_tunnel
         global url
         global proxies
@@ -55,11 +56,11 @@ def tunnel():
         ciphertext = bytes.fromhex(data)
         plaintext = cipher.decrypt(ciphertext)
         print(f">>|{plaintext.decode()}|<<")
-        _ = requests.get(f"{url}/conn?url={url_tunnel}", stream=True, proxies=proxies)
-        _ = requests.get(f"{url_tunnel}/conn?url={url}", stream=True, proxies=proxies)
+        thread = threading.Thread(target=msg_shell)
+        thread.start()
         return "ok!"
 
-    app.run("0.0.0.0")
+
 if __name__ == '__main__':
     #CHEK IF ADMIN KEY ARE IN
     dir = os.listdir("./admin")
@@ -133,11 +134,13 @@ _________                                __     __      __  .__      .__
                 print(key)
                 thread = threading.Thread(target=tunnel)
                 thread.start()
-                requests.get(f"{url}/conn?url={url_tunnel}", stream=True, proxies=proxies)
+                _ = requests.get(f"{url}/conn?url={url_tunnel}", stream=True, proxies=proxies)
+                msg_shell()
             elif cm == "tunnel":
                 try :
                     print("tu")
                     tunnel()
+
                 except Exception as e :
                     print(e)
             elif cm == "list":
@@ -151,4 +154,4 @@ _________                                __     __      __  .__      .__
             filename, line_no, _, _ = tb_info[-1]
             print(e)
             print("Exception occurred on line", line_no, "of file", filename)
-            pass
+
